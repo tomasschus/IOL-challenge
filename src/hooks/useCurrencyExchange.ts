@@ -1,0 +1,17 @@
+import { useQuery } from '@tanstack/react-query'
+import { getExchangeRate } from '../services/api'
+import type { ExchangeResponse } from '../types/currency'
+
+export const useCurrencyExchange = (
+  from: string,
+  to: string,
+  amount: number,
+  enabled: boolean = true
+) => {
+  return useQuery<ExchangeResponse>({
+    queryKey: ['exchange', from, to, amount],
+    queryFn: () => getExchangeRate(from, to),
+    enabled: enabled && from !== to && amount > 0,
+    staleTime: 5 * 60 * 1000, // 5 minutos
+  })
+}
