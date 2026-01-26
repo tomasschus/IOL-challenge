@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getCurrencies } from '../services/api'
-import type { Currency } from '../types/currency'
+import type { Currency, CurrencyApiResponse } from '../types/currency'
 
 export const useCurrencies = () => {
   const {
@@ -14,24 +14,13 @@ export const useCurrencies = () => {
   })
 
   const currencies: Currency[] = currenciesData
-    ? Object.entries(currenciesData).map(([code, currencyData]) => {
-        if (typeof currencyData === 'string') {
-          return {
-            code,
-            name: currencyData,
-          }
-        } else if (currencyData && typeof currencyData === 'object') {
-          return {
-            code,
-            name:
-              (currencyData as { name?: string; symbol?: string }).name || code,
-          }
-        }
-        return {
+    ? Object.entries(currenciesData as Record<string, CurrencyApiResponse>)
+        .map(([code, { name, symbol }]) => ({
           code,
-          name: code,
-        }
-      })
+          name,
+          symbol,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name))
     : []
 
   return {

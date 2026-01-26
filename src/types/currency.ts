@@ -1,6 +1,12 @@
 export interface Currency {
   code: string
   name: string
+  symbol: string
+}
+
+export interface CurrencyApiResponse {
+  name: string
+  symbol: string
 }
 
 export interface ExchangeRate {

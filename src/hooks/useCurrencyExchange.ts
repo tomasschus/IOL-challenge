@@ -8,10 +8,11 @@ export const useCurrencyExchange = (
   amount: number,
   enabled: boolean = true
 ) => {
+  const isEnabled = enabled && from !== to && amount > 0 && from.trim() !== '' && to.trim() !== ''
   return useQuery<ExchangeResponse>({
     queryKey: ['exchange', from, to, amount],
     queryFn: () => getExchangeRate(from, to),
-    enabled: enabled && from !== to && amount > 0,
+    enabled: isEnabled,
     staleTime: 5 * 60 * 1000, // 5 minutos
   })
 }

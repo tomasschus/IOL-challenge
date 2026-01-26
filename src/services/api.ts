@@ -12,6 +12,16 @@ export const getExchangeRate = async (
   from: string,
   to: string
 ): Promise<ExchangeResponse> => {
+  if (!from || from.trim() === '') {
+    throw new Error('Base currency is required')
+  }
+  if (!to || to.trim() === '') {
+    throw new Error('Target currency is required')
+  }
+  if (from === to) {
+    throw new Error('Base and target currencies must be different')
+  }
+
   const response = await api.get('/rates', {
     params: {
       base: from,

@@ -31,7 +31,8 @@ export const CurrencySelect = ({
     currency =>
       currency.code !== excludeCurrency &&
       (currency.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        currency.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        currency.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        currency.symbol.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
   const selectedCurrency = currencies.find(c => c.code === value)
