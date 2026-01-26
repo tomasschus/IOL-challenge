@@ -1,8 +1,8 @@
 // Color palette
 export const colors = {
-    primary: {
+    brand: {
         50: '#F2F0FF',
-        100: '#D9D1FF',
+        100: '#e0e0ff',
         200: '#BFAAFF',
         300: '#A27AFF',
         400: '#854BFF',
@@ -10,7 +10,7 @@ export const colors = {
         600: '#4D2EE6',
         700: '#3A26B3',
         800: '#281C80',
-        900: '#1A1259', // Darkest shade
+        900: '#05053c',
     },
     accent: {
         50: '#fef3c7',
