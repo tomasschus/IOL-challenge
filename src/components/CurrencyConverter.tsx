@@ -46,10 +46,7 @@ export const CurrencyConverter = () => {
   )
 
   const amount = watch('amount')
-  const numericAmount = useMemo(
-    () => parseFloat(amount || '0') || 0,
-    [amount]
-  )
+  const numericAmount = useMemo(() => parseFloat(amount || '0') || 0, [amount])
 
   useEffect(() => {
     setValue('from', fromCurrency, { shouldValidate: false })
@@ -75,7 +72,10 @@ export const CurrencyConverter = () => {
   }, [data, toCurrency, numericAmount])
 
   const inverseRate = useMemo(
-    () => (data?.rates[toCurrency] ? (1 / data.rates[toCurrency]).toFixed(6) : '0.00'),
+    () =>
+      data?.rates[toCurrency]
+        ? (1 / data.rates[toCurrency]).toFixed(6)
+        : '0.00',
     [data, toCurrency]
   )
 

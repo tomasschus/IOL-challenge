@@ -55,11 +55,25 @@ export const CurrencySelect = ({
 
   return (
     <div className="w-full">
-      <Label htmlFor={labelId} className="mb-4 block font-semibold" id={`${labelId}-label`}>
+      <Label
+        htmlFor={labelId}
+        className="mb-4 block font-semibold"
+        id={`${labelId}-label`}
+      >
         {label}
       </Label>
-      <Select value={value} onValueChange={onChange} key={`${value}-${excludeCurrency}`}>
-        <SelectTrigger id={labelId} aria-labelledby={`${labelId}-label`} aria-describedby={selectedCurrency ? `${labelId}-description` : undefined}>
+      <Select
+        value={value}
+        onValueChange={onChange}
+        key={`${value}-${excludeCurrency}`}
+      >
+        <SelectTrigger
+          id={labelId}
+          aria-labelledby={`${labelId}-label`}
+          aria-describedby={
+            selectedCurrency ? `${labelId}-description` : undefined
+          }
+        >
           <SelectValue placeholder="Select currency">
             {selectedCurrency ? selectedCurrency.name : undefined}
           </SelectValue>
@@ -88,28 +102,42 @@ export const CurrencySelect = ({
               aria-controls={currencyListId}
             />
           </div>
-          <div 
+          <div
             id={currencyListId}
             className="max-h-[300px] overflow-y-auto"
             role="listbox"
             aria-label="Available currencies"
           >
             {isLoading ? (
-              <div className="p-4 text-center text-[var(--neutral-500)]" role="status" aria-live="polite">
+              <div
+                className="p-4 text-center text-[var(--neutral-500)]"
+                role="status"
+                aria-live="polite"
+              >
                 Loading...
               </div>
             ) : filteredCurrencies.length === 0 ? (
-              <div className="p-4 text-center text-[var(--neutral-500)]" role="status" aria-live="polite">
+              <div
+                className="p-4 text-center text-[var(--neutral-500)]"
+                role="status"
+                aria-live="polite"
+              >
                 No currencies found
               </div>
             ) : (
               filteredCurrencies.map(currency => (
                 <SelectItem key={currency.code} value={currency.code}>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold" aria-label={`${currency.code} currency code`}>
+                    <span
+                      className="font-semibold"
+                      aria-label={`${currency.code} currency code`}
+                    >
                       {currency.code}
                     </span>
-                    <span className="text-[var(--neutral-600)]" aria-hidden="true">
+                    <span
+                      className="text-[var(--neutral-600)]"
+                      aria-hidden="true"
+                    >
                       {currency.name}
                     </span>
                   </div>
