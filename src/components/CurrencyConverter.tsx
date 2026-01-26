@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { FiLoader } from 'react-icons/fi'
 import { TbArrowsSort } from 'react-icons/tb'
@@ -33,13 +33,30 @@ export const CurrencyConverter = () => {
   })
 
   const { currencies } = useCurrencies()
-  const fromCurrencyName =
-    currencies.find(c => c.code === fromCurrency)?.name || fromCurrency
-  const toCurrencyName =
-    currencies.find(c => c.code === toCurrency)?.name || toCurrency
+
+  const fromCurrencyName = useMemo(
+    () => currencies.find(c => c.code === fromCurrency)?.name || fromCurrency,
+    [currencies, fromCurrency]
+  )
+
+  const toCurrencyName = useMemo(
+    () => currencies.find(c => c.code === toCurrency)?.name || toCurrency,
+    [currencies, toCurrency]
+  )
 
   const amount = watch('amount')
-  const numericAmount = parseFloat(amount || '0') || 0
+  const numericAmount = useMemo(
+    () => parseFloat(amount || '0') || 0,
+    [amount]
+  )
+
+  useEffect(() => {
+    setValue('from', fromCurrency, { shouldValidate: false })
+  }, [fromCurrency, setValue])
+
+  useEffect(() => {
+    setValue('to', toCurrency, { shouldValidate: false })
+  }, [toCurrency, setValue])
 
   const { data, isLoading, error } = useCurrencyExchange(
     fromCurrency,
@@ -48,31 +65,43 @@ export const CurrencyConverter = () => {
     numericAmount > 0 && fromCurrency !== toCurrency
   )
 
-  const calculateResult = () => {
+  const result = useMemo(() => {
     if (!data || !data.rates || !data.rates[toCurrency]) {
       return '0.00'
     }
-
     const rate = data.rates[toCurrency]
-    const result = numericAmount * rate
-    return result.toFixed(6)
-  }
+    return (numericAmount * rate).toFixed(6)
+  }, [data, toCurrency, numericAmount])
 
-  const result = calculateResult()
-  const inverseRate = data?.rates[toCurrency]
-    ? (1 / data.rates[toCurrency]).toFixed(6)
-    : '0.00'
+  const inverseRate = useMemo(
+    () => (data?.rates[toCurrency] ? (1 / data.rates[toCurrency]).toFixed(6) : '0.00'),
+    [data, toCurrency]
+  )
 
-  const handleSwap = () => {
-    const tempFrom = fromCurrency
-    const tempTo = toCurrency
-    setFromCurrency(tempTo)
-    setToCurrency(tempFrom)
-    setValue('from', tempTo)
-    setValue('to', tempFrom)
-  }
+  const handleSwap = useCallback(() => {
+    const newFrom = toCurrency
+    const newTo = fromCurrency
+    setFromCurrency(newFrom)
+    setToCurrency(newTo)
+  }, [fromCurrency, toCurrency])
 
-  const formatDate = (dateString?: string) => {
+  const handleFromChange = useCallback(
+    (value: string) => {
+      setFromCurrency(value)
+      setValue('from', value)
+    },
+    [setValue]
+  )
+
+  const handleToChange = useCallback(
+    (value: string) => {
+      setToCurrency(value)
+      setValue('to', value)
+    },
+    [setValue]
+  )
+
+  const formatDate = useCallback((dateString?: string) => {
     if (!dateString) return ''
     const date = new Date(dateString)
     return (
@@ -85,17 +114,17 @@ export const CurrencyConverter = () => {
         timeZone: 'UTC',
       }) + ' UTC'
     )
-  }
+  }, [])
 
   return (
     <div className="relative w-full bg-white font-sans">
-      <div className="w-full h-10 bg-[var(--brand-900)] flex items-center pl-6">
-        <span className="text-white text-sm font-bold">Currency Converter</span>
-      </div>
+      <header className="w-full h-10 bg-[var(--brand-900)] flex items-center pl-4 sm:pl-6">
+        <h2 className="text-white text-sm font-bold">Currency Converter</h2>
+      </header>
 
       <div className="w-full bg-[var(--brand-500)] pt-12 pb-36">
-        <div className="flex items-center justify-center h-full">
-          <h1 className="text-[28px] font-semibold text-white">
+        <div className="flex items-center justify-center h-full px-4">
+          <h1 className="text-base sm:text-[28px] font-semibold text-white text-center break-words max-w-4xl">
             {numericAmount || 1} {fromCurrency} to {toCurrency} – Convert{' '}
             {fromCurrencyName} to {toCurrencyName}
           </h1>
@@ -103,16 +132,13 @@ export const CurrencyConverter = () => {
       </div>
 
       <Card
-        className="relative z-10 mx-auto"
-        style={{
-          width: 'calc(100% - 96px)',
-          maxWidth: '1000px',
-          marginTop: '-100px',
-        }}
+        className="relative z-10 mx-auto w-[calc(100%-2rem)] sm:w-[calc(100%-96px)] max-w-[1000px] -mt-[100px]"
+        role="region"
+        aria-label="Currency conversion form"
       >
-        <CardContent className="pt-8 pb-4 px-8">
+        <CardContent className="pt-8 pb-4 px-4 sm:px-8">
           <form>
-            <div className="grid gap-2 mb-20" style={{ gridTemplateColumns: '1fr 1fr 0.3fr 1fr' }}>
+            <div className="grid gap-4 sm:gap-2 mb-12 sm:mb-20 grid-cols-1 sm:grid-cols-[1fr_1fr_0.3fr_1fr]">
               <div>
                 <Controller
                   name="amount"
@@ -146,59 +172,53 @@ export const CurrencyConverter = () => {
                 <CurrencySelect
                   label="From"
                   value={fromCurrency}
-                  onChange={value => {
-                    setFromCurrency(value)
-                    setValue('from', value)
-                  }}
+                  onChange={handleFromChange}
                   excludeCurrency={toCurrency}
                 />
               </div>
 
-              <div className="flex items-end justify-center pb-0.5">
+              <div className="flex items-end justify-center pb-0.5 sm:pb-0.5 order-3 sm:order-none">
                 <Button
                   type="button"
                   onClick={handleSwap}
                   variant="secondary"
                   size="icon"
-                  className="rounded-full bg-white border-2 border-[var(--brand-500)] text-[var(--brand-500)] hover:bg-[var(--brand-50)]"
+                  className="rounded-full bg-white border-2 border-[var(--brand-500)] text-[var(--brand-500)] hover:bg-[var(--brand-50)] focus-visible:ring-2 focus-visible:ring-[var(--brand-500)]"
                   aria-label="Swap currencies"
                 >
-                  <TbArrowsSort className="w-5 h-5" />
+                  <TbArrowsSort className="w-5 h-5" aria-hidden="true" />
                 </Button>
               </div>
 
-              <div>
+              <div className="order-4 sm:order-none">
                 <CurrencySelect
                   label="To"
                   value={toCurrency}
-                  onChange={value => {
-                    setToCurrency(value)
-                    setValue('to', value)
-                  }}
+                  onChange={handleToChange}
                   excludeCurrency={fromCurrency}
                 />
               </div>
             </div>
 
-            <div className="flex gap-8 mb-6">
-              <div className="flex-shrink-0" style={{ width: '43%' }}>
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 mb-6">
+              <div className="flex-shrink-0 w-full sm:w-[43%]">
                 {isLoading ? (
-                  <div className="flex items-center gap-3 py-4">
-                    <FiLoader className="w-6 h-6 animate-spin text-[var(--brand-500)]" />
+                  <div className="flex items-center gap-3 py-4" role="status" aria-live="polite" aria-label="Loading exchange rate">
+                    <FiLoader className="w-6 h-6 animate-spin text-[var(--brand-500)]" aria-hidden="true" />
                     <span className="text-base text-[var(--neutral-700)]">
                       Calculating...
                     </span>
                   </div>
                 ) : error ? (
-                  <div className="text-[var(--error-600)]">
+                  <div className="text-[var(--error-600)]" role="alert" aria-live="assertive">
                     Error loading exchange rate. Please try again.
                   </div>
                 ) : (
-                  <div>
-                    <div className="text-[32px] font-bold leading-tight">
+                  <div role="status" aria-live="polite">
+                    <div className="text-2xl sm:text-[32px] font-bold leading-tight">
                       {numericAmount || 1} {fromCurrencyName} =
                     </div>
-                    <div className="text-[32px] font-bold mb-3 leading-tight">
+                    <div className="text-2xl sm:text-[32px] font-bold mb-3 leading-tight">
                       {result} {toCurrencyName}
                     </div>
                     <div className="text-sm text-[var(--neutral-500)] ">
@@ -208,7 +228,7 @@ export const CurrencyConverter = () => {
                 )}
               </div>
 
-              <div className="flex-1 flex items-start mt-6">
+              <div className="flex-1 flex items-start mt-0 sm:mt-6">
                 <div className="bg-[var(--brand-100)] rounded-lg px-4 py-6 w-full">
                   <p className="text-sm text-[var(--neutral-700)] flex flex-col gap-2">
                     <span>
