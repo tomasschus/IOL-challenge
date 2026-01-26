@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import { TbArrowsSort } from 'react-icons/tb'
 import { Button } from './ui/button'
 
@@ -13,7 +14,11 @@ export const SwapButton = ({ onClick }: SwapButtonProps) => {
         onClick={onClick}
         variant="secondary"
         size="icon"
-        className="rounded-full bg-white border-2 border-[var(--brand-500)] text-[var(--brand-500)] hover:bg-[var(--brand-50)] focus-visible:ring-2 focus-visible:ring-[var(--brand-500)]"
+        className={cn(
+          'rounded-full bg-white border-2 border-[var(--brand-500)]',
+          'text-[var(--brand-500)] hover:bg-[var(--brand-50)]',
+          'focus-visible:ring-2 focus-visible:ring-[var(--brand-500)]'
+        )}
         aria-label="Swap currencies"
       >
         <TbArrowsSort className="w-5 h-5" aria-hidden="true" />
