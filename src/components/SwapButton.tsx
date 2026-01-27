@@ -21,12 +21,7 @@ export const SwapButton = ({ onClick }: SwapButtonProps) => {
         )}
         aria-label="Swap currencies"
       >
-        <img 
-          src={swapIcon} 
-          alt="" 
-          className="w-5 h-5" 
-          aria-hidden="true" 
-        />
+        <img src={swapIcon} alt="" className="w-5 h-5" aria-hidden="true" />
       </Button>
     </div>
   )

@@ -1,4 +1,4 @@
-import { formatDate } from "@/utils/date"
+import { formatDate } from '@/utils/date'
 
 interface LastUpdatedProps {
   fromCurrencyName: string
@@ -11,7 +11,6 @@ export const LastUpdated = ({
   toCurrencyName,
   date,
 }: LastUpdatedProps) => {
-
   return (
     <div className="text-right">
       <p className="text-xs text-[var(--neutral-500)]">
