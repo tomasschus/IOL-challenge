@@ -72,7 +72,7 @@ export const ConversionForm = ({
 
       <SwapButton onClick={onSwap} />
 
-      <div className="order-4 sm:order-none">
+      <div className="order-4 sm:order-0">
         <CurrencySelect
           label="To"
           value={toCurrency}

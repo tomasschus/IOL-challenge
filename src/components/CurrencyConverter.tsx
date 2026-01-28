@@ -127,7 +127,7 @@ export const CurrencyConverter = () => {
             />
 
             <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 mb-6">
-              <div className="flex-shrink-0 w-full sm:w-[43%]">
+              <div className="shrink-0 w-full sm:w-[43%]">
                 <ConversionResult
                   isLoading={isLoading}
                   error={error}
