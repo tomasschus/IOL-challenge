@@ -11,7 +11,7 @@ export const useCurrencyExchange = (
 ) => {
   const isEnabled = enabled && canEnableExchange(from, to, amount)
   return useQuery<ExchangeResponse>({
-    queryKey: ['exchange', from, to, amount],
+    queryKey: ['exchange', from, to],
     queryFn: () => getExchangeRate(from, to),
     enabled: isEnabled,
     staleTime: 5 * 60 * 1000, // 5 minutos
