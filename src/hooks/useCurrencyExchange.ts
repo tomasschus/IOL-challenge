@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { getExchangeRate } from '../services/api'
 import type { ExchangeResponse } from '../types/currency'
+import { canEnableExchange } from '../utils/validation'
 
 export const useCurrencyExchange = (
   from: string,
@@ -8,12 +9,7 @@ export const useCurrencyExchange = (
   amount: number,
   enabled: boolean = true
 ) => {
-  const isEnabled =
-    enabled &&
-    from !== to &&
-    amount > 0 &&
-    from.trim() !== '' &&
-    to.trim() !== ''
+  const isEnabled = enabled && canEnableExchange(from, to, amount)
   return useQuery<ExchangeResponse>({
     queryKey: ['exchange', from, to, amount],
     queryFn: () => getExchangeRate(from, to),

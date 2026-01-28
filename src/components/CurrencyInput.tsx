@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils'
 import { forwardRef } from 'react'
+import { generateId } from '../utils/string'
+import { isValidDecimalInput } from '../utils/validation'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 
@@ -15,13 +17,13 @@ interface CurrencyInputProps {
 
 export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
   ({ label, value, onChange, onBlur, name, error, disabled = false }, ref) => {
-    const inputId = `currency-input-${label.toLowerCase().replace(/\s+/g, '-')}`
+    const inputId = generateId('currency-input', label)
     const errorId = `${inputId}-error`
     const labelId = `${inputId}-label`
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value
-      if (inputValue === '' || /^\d*\.?\d*$/.test(inputValue)) {
+      if (isValidDecimalInput(inputValue)) {
         onChange(inputValue)
       }
     }

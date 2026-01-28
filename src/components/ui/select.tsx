@@ -1,6 +1,6 @@
 import * as SelectPrimitive from '@radix-ui/react-select'
 import * as React from 'react'
-import { FiCheck, FiChevronDown } from 'react-icons/fi'
+import { FiCheck, FiChevronDown, FiChevronUp } from 'react-icons/fi'
 
 import { cn } from '@/lib/utils'
 
@@ -42,7 +42,7 @@ const SelectScrollUpButton = React.forwardRef<
     )}
     {...props}
   >
-    <FiChevronDown className="h-4 w-4" />
+    <FiChevronUp className="h-4 w-4" />
   </SelectPrimitive.ScrollUpButton>
 ))
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName

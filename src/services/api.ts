@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { ExchangeResponse } from '../types/currency'
+import { validateCurrencyParams } from '../utils/validation'
 
 const API_BASE_URL = 'https://api.vatcomply.com'
 
@@ -12,14 +13,9 @@ export const getExchangeRate = async (
   from: string,
   to: string
 ): Promise<ExchangeResponse> => {
-  if (!from || from.trim() === '') {
-    throw new Error('Base currency is required')
-  }
-  if (!to || to.trim() === '') {
-    throw new Error('Target currency is required')
-  }
-  if (from === to) {
-    throw new Error('Base and target currencies must be different')
+  const validation = validateCurrencyParams(from, to)
+  if (!validation.isValid) {
+    throw new Error(validation.error)
   }
 
   const response = await api.get('/rates', {

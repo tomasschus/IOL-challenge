@@ -1,5 +1,6 @@
 import type { Control, FieldErrors } from 'react-hook-form'
 import { Controller } from 'react-hook-form'
+import { isNonNegative } from '../utils/validation'
 import { CurrencyInput } from './CurrencyInput'
 import { CurrencySelect } from './CurrencySelect'
 import { SwapButton } from './SwapButton'
@@ -40,10 +41,8 @@ export const ConversionForm = ({
           rules={{
             required: 'Amount is required',
             validate: {
-              positive: (v: string) => {
-                const num = parseFloat(v || '0')
-                return num >= 0 || 'Amount cannot be negative'
-              },
+              positive: (v: string) =>
+                isNonNegative(v) || 'Amount cannot be negative',
             },
           }}
           render={({ field, fieldState }) => (

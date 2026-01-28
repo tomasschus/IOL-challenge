@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useCurrencies } from '../hooks/useCurrencies'
 import { useCurrencyExchange } from '../hooks/useCurrencyExchange'
+import { calculateConversion, calculateInverseRate } from '../utils/currency'
+import { parseNumericAmount } from '../utils/validation'
 import { ConversionForm } from './ConversionForm'
 import { ConversionResult } from './ConversionResult'
 import { ConverterHeader } from './ConverterHeader'
@@ -46,15 +48,7 @@ export const CurrencyConverter = () => {
   )
 
   const amount = watch('amount')
-  const numericAmount = useMemo(() => parseFloat(amount || '0') || 0, [amount])
-
-  useEffect(() => {
-    setValue('from', fromCurrency, { shouldValidate: false })
-  }, [fromCurrency, setValue])
-
-  useEffect(() => {
-    setValue('to', toCurrency, { shouldValidate: false })
-  }, [toCurrency, setValue])
+  const numericAmount = useMemo(() => parseNumericAmount(amount), [amount])
 
   const { data, isLoading, error } = useCurrencyExchange(
     fromCurrency,
@@ -64,27 +58,27 @@ export const CurrencyConverter = () => {
   )
 
   const result = useMemo(() => {
-    if (!data || !data.rates || !data.rates[toCurrency]) {
+    if (!data?.rates?.[toCurrency]) {
       return '0.00'
     }
-    const rate = data.rates[toCurrency]
-    return (numericAmount * rate).toFixed(6)
+    return calculateConversion(numericAmount, data.rates[toCurrency])
   }, [data, toCurrency, numericAmount])
 
-  const inverseRate = useMemo(
-    () =>
-      data?.rates[toCurrency]
-        ? (1 / data.rates[toCurrency]).toFixed(6)
-        : '0.00',
-    [data, toCurrency]
-  )
+  const inverseRate = useMemo(() => {
+    if (!data?.rates?.[toCurrency]) {
+      return '0.00'
+    }
+    return calculateInverseRate(data.rates[toCurrency])
+  }, [data, toCurrency])
 
   const handleSwap = useCallback(() => {
     const newFrom = toCurrency
     const newTo = fromCurrency
     setFromCurrency(newFrom)
     setToCurrency(newTo)
-  }, [fromCurrency, toCurrency])
+    setValue('from', newFrom, { shouldValidate: false })
+    setValue('to', newTo, { shouldValidate: false })
+  }, [fromCurrency, toCurrency, setValue])
 
   const handleFromChange = useCallback(
     (value: string) => {
