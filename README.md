@@ -12,6 +12,7 @@ Aplicación de calculadora de cambio de monedas desarrollada con React, TypeScri
 - **Axios** - Cliente HTTP
 - **React Hook Form** - Gestión de formularios
 - **React Icons** - Iconos
+- **Vitest** - Framework de testing
 - **ESLint + Prettier** - Linting y formateo de código
 
 ## 📋 Prerequisitos
@@ -70,10 +71,15 @@ npm run preview
 
 ```text
 src/
+├── assets/         # Imágenes y recursos estáticos
 ├── components/     # Componentes React
+│   └── ui/         # Componentes UI reutilizables (shadcn/ui)
+├── config/         # Archivos de configuración
 ├── hooks/          # Custom hooks
+├── lib/            # Utilidades y helpers
 ├── services/       # Servicios API
 ├── types/          # Tipos TypeScript
+├── utils/          # Funciones utilitarias (con tests)
 ├── App.tsx         # Componente principal
 ├── main.tsx        # Punto de entrada
 └── index.css       # Estilos globales (Tailwind)
@@ -164,7 +170,3 @@ Las funciones de cálculo de conversión (`utils/currency.ts`) son funciones pur
 ### Query Keys Granulares
 
 Uso de query keys descriptivas (`['exchange', from, to]`) que permiten caché granular por par de monedas, optimizando el rendimiento al evitar refetches innecesarios cuando se cambia entre pares ya consultados.
-
-## 📄 Licencia
-
-Este proyecto es parte de un challenge técnico.
